@@ -97,12 +97,54 @@ exports.genre_create_post = [
 
 // Display Genre delete form on GET.
 exports.genre_delete_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: Genre delete GET');
+
+    Genre.findById(req.params.id)
+    .exec(function(err, results) {
+        if (err) return next(err);
+        if (results == null) {
+            res.redirect('/catalog/genres');
+        }
+        res.render('genre_delete', {title: 'Delete Genre', genre: results});
+    });
 };
 
 // Handle Genre delete on POST.
 exports.genre_delete_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Genre delete POST');
+
+    async.parallel({
+        genre: function(callback) {
+            Genre.findById(req.params.id).exec(callback)
+        },
+        books: function(callback) {
+            Book.find({}).exec(callback)
+        },
+    }, function(err, results) {
+        if (err) return next(err);
+
+        // Check if there are any books with this genre.
+        var genre_books = [];
+
+        for (let book_iter = 0; book_iter < results.books.length; book_iter++) {
+            for (let book_g_iter = 0; book_g_iter < results.books[book_iter].genre.length; book_g_iter++) {
+                if (results.genre._id.toString() == results.books[book_iter].genre[book_g_iter]._id.toString()) {
+                    genre_books.push(results.books[book_iter]);
+                }
+            }
+        }
+
+        if (genre_books.length > 0) {
+            // Genre has books. Render in the same way as for GET route.
+            res.render('genre_delete', {title: 'Delete Genre', genre: results.genre, genreUsed: true, genre_books: genre_books, books: results.books});
+            return;
+        }
+        else {
+            // Genre has no books. Delete genre and redirect to list of genres.
+            Genre.findByIdAndRemove(req.params.id, function deleteGenre(err) {
+                if (err) return next(err);
+                res.redirect('/catalog/genre');
+            })
+        }
+    })
 };
 
 // Display Genre update form on GET.

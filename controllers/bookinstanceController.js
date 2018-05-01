@@ -44,12 +44,12 @@ exports.bookinstance_create_get = function(req, res) {
 };
 
 // Handle BookInstance create on POST.
-exports.bookinstance_create_post = function(req, res) {
+exports.bookinstance_create_post = [
 
     // Validate fields.
     body('book', 'Book must be specified').isLength({ min: 1 }).trim(),
     body('imprint', 'Imprint must be specified').isLength({ min: 1 }).trim(),
-    boyd('due_back', 'Invalid date').optional({ checkFalsy: true }).isISO8601,
+    body('due_back', 'Invalid date').optional({ checkFalsy: true }).isISO8601(),
 
     // Sanitize fields.
     sanitizeBody('book').trim().escape(),
@@ -90,7 +90,7 @@ exports.bookinstance_create_post = function(req, res) {
             });
         }
     }
-};
+];
 
 // Display BookInstance delete form on GET.
 exports.bookinstance_delete_get = function(req, res) {

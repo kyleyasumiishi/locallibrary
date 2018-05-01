@@ -21,11 +21,11 @@ AuthorSchema.virtual('url').get(function() {
 });
 
 AuthorSchema.virtual('birth_formatted').get(function() {
-    return (this.date_of_birth) ? moment(this.date_of_birth).format('YYYY-MM-DD') : 'unknown';
+    return (this.date_of_birth) ? moment(this.date_of_birth).add(1, 'days').format('YYYY-MM-DD') : 'unknown';
 });
 
 AuthorSchema.virtual('death_formatted').get(function() {
-    return (this.date_of_death) ? moment(this.date_of_death).format('YYYY-MM-DD') : 'present';
+    return (this.date_of_death) ? moment(this.date_of_death).add(1, 'days').format('YYYY-MM-DD') : 'present';
 });
 
 
