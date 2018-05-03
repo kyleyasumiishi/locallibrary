@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var stylus = require('stylus');
+var compression = require('compression');
+var helmet = require('helmet');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -11,6 +13,8 @@ var catalogRouter = require('./routes/catalog');
 
 
 var app = express();
+app.use(compression()); // compress all routes
+app.use(helmet());
 
 // Set up mongoose connection
 var mongoose = require('mongoose');
